@@ -31,12 +31,20 @@ namespace ServerlessDiscordBot.Commands
             try
             {
                 using var imageGenerator = new ImageGenerator(runestring);
-                using var imageStream = new MemoryStream();
-                imageGenerator.RenderToStream(imageStream, ImageFormat.Png);
-                imageStream.Position = 0; // Reset to start after writing
+                try
+                {
+                    using var imageStream = new MemoryStream();
+                    imageGenerator.RenderToStream(imageStream, ImageFormat.Png);
+                    imageStream.Position = 0; // Reset to start after writing
 
-                Log.LogInformation($"Responding with RuneString image for {runestring}");
-                await FollowupWithFileAsync(imageStream, $"Runestring-{runestring[..Math.Min(runestring.Length, 252)]}.png");
+                    Log.LogInformation($"Responding with RuneString image for {runestring}");
+                    await FollowupWithFileAsync(imageStream, $"Runestring-{runestring[..Math.Min(runestring.Length, 252)]}.png");
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError(ex, $"Unexpected error rendering RuneString image for {runestring}");
+                    await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. <@{DiscordAdminUserId}>, please check logs with operation ID `{AzureContext.InvocationId}` for more details.", allowedMentions: Discord.AllowedMentions.All);
+                }
             }
             catch (ArgumentException ex)
             {
