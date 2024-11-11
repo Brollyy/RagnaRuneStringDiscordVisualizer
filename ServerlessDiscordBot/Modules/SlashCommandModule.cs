@@ -40,9 +40,13 @@ namespace ServerlessDiscordBot.Commands
             }
             catch (ArgumentException ex)
             {
-                var operationId = Log.GetType().GetProperty("OperationId")?.GetValue(Log)?.ToString() ?? Guid.NewGuid().ToString();
-                Log.LogWarning(ex, $"Couldn't render RuneString image for {runestring}");
-                await FollowupAsync($"Uh oh... Looks like there was an issue creating the image. <@{DiscordAdminUserId}>, please check logs with operation ID `{AzureContext.InvocationId}` for more details.", allowedMentions: Discord.AllowedMentions.All);
+                Log.LogWarning($"Invalid input for RuneString image - {runestring}");
+                await FollowupAsync(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex, $"Unexpected error rendering RuneString image for {runestring}");
+                await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. <@{DiscordAdminUserId}>, please check logs with operation ID `{AzureContext.InvocationId}` for more details.", allowedMentions: Discord.AllowedMentions.All);
             }
         }
     }
