@@ -56,11 +56,12 @@ namespace ServerlessDiscordBot
                 }
                 else if (interaction.Type == InteractionType.ApplicationCommand)
                 {
-                    log.LogInformation($"Responding to slash command.");
+                    log.LogInformation("Responding to slash command.");
 
                     // Set up InteractionService and register SlashCommandModule dynamically
                     if (!_interactionService.Modules.Any(module => module.Name == "SlashCommandModule"))
                     {
+                        log.LogInformation("Registering SlashCommandModule");
                         await _interactionService.AddModuleAsync<SlashCommandModule>(null);
                     }
 
@@ -68,6 +69,7 @@ namespace ServerlessDiscordBot
                     var interactionContext = new RestInteractionContext(_client, interaction);
 
                     // Execute the command from SlashCommandModule
+                    log.LogInformation("Executing command from SlashCommandModule");
                     var result = await _interactionService.ExecuteCommandAsync(interactionContext, null);
 
                     if (!result.IsSuccess)
