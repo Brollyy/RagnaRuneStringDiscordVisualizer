@@ -36,7 +36,7 @@ namespace ServerlessDiscordBot
         [FunctionName("HandleDiscordInteraction")]
         public static async Task<IActionResult> Run(
              [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-             ILogger log)
+             ILogger log, ExecutionContext context)
         {
             DiscordLogService logService = new(_client, _interactionService, log);
             try
@@ -73,6 +73,7 @@ namespace ServerlessDiscordBot
                         log.LogInformation("Registering SlashCommandModule");
                         await _interactionService.AddModuleAsync<SlashCommandModule>(null);
                         SlashCommandModule.Log = log;
+                        SlashCommandModule.AzureContext = context;
                     }
 
                     // Create an Interaction Context for the InteractionService

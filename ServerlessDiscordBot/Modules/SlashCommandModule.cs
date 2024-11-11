@@ -1,5 +1,6 @@
 ﻿using Discord.Interactions;
 using Discord.Rest;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using RagnaRuneStringVisualizer;
 using System;
@@ -13,7 +14,9 @@ namespace ServerlessDiscordBot.Commands
     [SupportedOSPlatform("windows")]
     public class SlashCommandModule : RestInteractionModuleBase<RestInteractionContext>
     {
+        private static readonly string DiscordAdminUserId = Environment.GetEnvironmentVariable("DiscordAdminUserId"); // Add your Discord ID in your settings
         public static ILogger Log { get; set; }
+        public static ExecutionContext AzureContext { get; set; }
 
         [SlashCommand("runestring-image", "Renders an image that shows the contents of the runestring")]
         public async Task RunestringImageAsync(
@@ -37,7 +40,9 @@ namespace ServerlessDiscordBot.Commands
             }
             catch (ArgumentException ex)
             {
+                var operationId = Log.GetType().GetProperty("OperationId")?.GetValue(Log)?.ToString() ?? Guid.NewGuid().ToString();
                 Log.LogWarning(ex, $"Couldn't render RuneString image for {runestring}");
+                await FollowupAsync($"Uh oh... Looks like there was an issue creating the image. <@{DiscordAdminUserId}>, please check logs with operation ID `{AzureContext.InvocationId}` for more details.", allowedMentions: Discord.AllowedMentions.All);
             }
         }
     }
