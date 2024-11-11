@@ -56,7 +56,7 @@ namespace ServerlessDiscordBot
                 }
                 else if (interaction.Type == InteractionType.ApplicationCommand)
                 {
-                    log.LogInformation($"Responding to command: {(interaction.Data as IApplicationCommandInteractionData).Name}");
+                    log.LogInformation($"Responding to slash command.");
 
                     // Set up InteractionService and register SlashCommandModule dynamically
                     if (!_interactionService.Modules.Any(module => module.Name == "SlashCommandModule"))

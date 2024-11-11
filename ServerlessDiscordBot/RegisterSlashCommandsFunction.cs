@@ -46,7 +46,7 @@ namespace ServerlessDiscordBot
             }
             catch (Exception ex)
             {
-                log.LogError($"Error registering commands: {ex.Message}");
+                log.LogError(ex, $"Error registering commands: {ex.Message}");
                 return new BadRequestObjectResult($"Failed to register commands: {ex.Message}");
             }
         }
