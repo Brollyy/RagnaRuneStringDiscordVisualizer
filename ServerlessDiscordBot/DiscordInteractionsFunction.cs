@@ -22,7 +22,11 @@ namespace ServerlessDiscordBot
         private static readonly string BotToken = Environment.GetEnvironmentVariable("DiscordBotToken");
 
         private static readonly DiscordRestClient _client = new();
-        private static readonly InteractionService _interactionService = new(_client);
+        private static readonly InteractionService _interactionService = new(_client, new()
+        {
+            DefaultRunMode = RunMode.Sync,
+            LogLevel = LogSeverity.Debug
+        });
 
         [FunctionName("HandleDiscordInteraction")]
         public static async Task<IActionResult> Run(

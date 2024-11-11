@@ -7,8 +7,6 @@
           "excludedTypes": "Request"
         },
         "enableLiveMetricsFilters": true
-      },
-      "fileLoggingMode": "debugOnly",
-      "logLevel": {"default": "Debug"}
+      }
     }
 }
