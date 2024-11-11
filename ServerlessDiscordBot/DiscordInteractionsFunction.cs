@@ -26,6 +26,7 @@ namespace ServerlessDiscordBot
              [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
              ILogger log)
         {
+            DiscordLogService logService = new(_client, _interactionService, log);
             try
             {
                 log.LogInformation("Request to handle Discord interaction.");
@@ -47,10 +48,13 @@ namespace ServerlessDiscordBot
                 // Check interaction type
                 if (interaction.Type == InteractionType.Ping)
                 {
+                    log.LogInformation("Responding to ping.");
                     return new JsonResult(new { type = InteractionResponseType.Pong });
                 }
                 else if (interaction.Type == InteractionType.ApplicationCommand)
                 {
+                    log.LogInformation($"Responding to command: {interaction.Data}");
+
                     // Set up InteractionService and register SlashCommandModule dynamically
                     await _interactionService.AddModuleAsync<SlashCommandModule>(null);
 
@@ -72,11 +76,24 @@ namespace ServerlessDiscordBot
                         return new BadRequestObjectResult(new { content = $"Error: {result.ErrorReason}" });
                     }
 
-                    return new AcceptedResult();
+                    if (interaction.HasResponded)
+                    {
+                        log.LogInformation("Already successfully responded to the command, returning 202.");
+                        return new AcceptedResult();
+                    }
+
+                    log.LogInformation("Successfully handled the command without any response, responding with ephemeral message.");
+                    return new ContentResult
+                    {
+                        Content = interaction.Respond("Success!", ephemeral: true),
+                        ContentType = "application/json",
+                        StatusCode = 200
+                    };
                 }
             }
             catch (BadSignatureException)
             {
+                log.LogWarning("Bad signature of the request");
                 return new UnauthorizedResult();
             }
             catch (Exception ex)
@@ -87,6 +104,34 @@ namespace ServerlessDiscordBot
             }
 
             return new BadRequestResult();
+        }
+
+        private class DiscordLogService
+        {
+            private readonly ILogger log;
+
+            public DiscordLogService(DiscordRestClient client, InteractionService interactionService, ILogger log)
+            {
+                this.log = log;
+                client.Log += LogAsync;
+                interactionService.Log += LogAsync;
+            }
+
+            private Task LogAsync(LogMessage message)
+            {
+                log.Log(message.Severity switch
+                {
+                    LogSeverity.Critical => LogLevel.Critical,
+                    LogSeverity.Error => LogLevel.Error,
+                    LogSeverity.Warning => LogLevel.Warning,
+                    LogSeverity.Info => LogLevel.Information,
+                    LogSeverity.Verbose => LogLevel.Trace,
+                    LogSeverity.Debug => LogLevel.Debug,
+                    _ => LogLevel.None
+                }, message.Exception, "{}", message);
+
+                return Task.CompletedTask;
+            }
         }
     }
 }
