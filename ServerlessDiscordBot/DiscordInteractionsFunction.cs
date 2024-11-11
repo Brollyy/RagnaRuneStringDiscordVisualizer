@@ -67,6 +67,7 @@ namespace ServerlessDiscordBot
                     {
                         log.LogInformation("Registering SlashCommandModule");
                         await _interactionService.AddModuleAsync<SlashCommandModule>(null);
+                        SlashCommandModule.Log = log;
                     }
 
                     // Create an Interaction Context for the InteractionService
