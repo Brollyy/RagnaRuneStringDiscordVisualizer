@@ -11,6 +11,8 @@ using ServerlessDiscordBot.Services;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -21,6 +23,7 @@ namespace ServerlessDiscordBot
         private static readonly string PublicKey = Environment.GetEnvironmentVariable("DiscordPublicKey");
         private static readonly string BotToken = Environment.GetEnvironmentVariable("DiscordBotToken");
 
+        private static readonly HttpClient httpClient = new();
         private static readonly DiscordRestClient _client = new();
         private static readonly InteractionService _interactionService = new(_client, new()
         {
@@ -72,6 +75,7 @@ namespace ServerlessDiscordBot
 
                     // Create an Interaction Context for the InteractionService
                     var interactionContext = new RestInteractionContext(_client, interaction);
+                    interactionContext.InteractionResponseCallback = (payload) => SendInteractionResponseAsync(interactionContext, payload);
 
                     // Execute the command from SlashCommandModule
                     log.LogInformation("Executing command from SlashCommandModule");
@@ -117,6 +121,15 @@ namespace ServerlessDiscordBot
             }
 
             return new BadRequestResult();
+        }
+
+        private static async Task SendInteractionResponseAsync(IRestInteractionContext context, string payload)
+        {
+            var interaction = context.Interaction;
+            var url = $"https://discord.com/api/v10/interactions/{interaction.Id}/{interaction.Token}/callback";
+
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
+            await httpClient.PostAsync(url, content);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Discord.Interactions;
 using Discord.Rest;
 using Microsoft.Extensions.Logging;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace ServerlessDiscordBot.Commands
@@ -17,6 +18,13 @@ namespace ServerlessDiscordBot.Commands
         {
             Log.LogInformation($"Generating RuneString image for {runestring}");
             await DeferAsync();
+
+            Log.LogInformation("Deferred response, processing...");
+            await Task.Delay(5000); // Processing
+            using var imageStream = File.OpenRead("Image.bmp");
+
+            Log.LogInformation($"Responding with RuneString image for {runestring}");
+            await FollowupWithFileAsync(imageStream, "Image.bmp");
         }
     }
 }
