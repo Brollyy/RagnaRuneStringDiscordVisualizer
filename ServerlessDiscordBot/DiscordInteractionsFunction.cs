@@ -16,6 +16,7 @@ namespace ServerlessDiscordBot
     public static class DiscordInteractionsFunction
     {
         private static readonly string PublicKey = Environment.GetEnvironmentVariable("DiscordPublicKey");
+        private static readonly string BotToken = Environment.GetEnvironmentVariable("DiscordBotToken");
 
         private static readonly DiscordRestClient _client = new();
         private static readonly InteractionService _interactionService = new(_client);
@@ -27,6 +28,11 @@ namespace ServerlessDiscordBot
         {
             try
             {
+                log.LogInformation("Request to handle Discord interaction.");
+
+                // Log in with the bot
+                await _client.LoginAsync(TokenType.Bot, BotToken);
+
                 // Read the request body as a byte array for signature validation
                 byte[] bodyBytes;
                 using (var memoryStream = new MemoryStream())

@@ -13,7 +13,6 @@ namespace ServerlessDiscordBot
 {
     public static class RegisterSlashCommandsFunction
     {
-        // Get the bot token and client ID from the environment
         private static readonly string BotToken = Environment.GetEnvironmentVariable("DiscordBotToken");
 
         private static readonly DiscordRestClient _client = new();
