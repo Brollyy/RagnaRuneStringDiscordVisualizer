@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerlessDiscordBot", "ServerlessDiscordBot\ServerlessDiscordBot.csproj", "{46B04DDE-5B94-40F1-974A-599981DEE547}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D2B6B99-05C0-4E26-8D22-DEDB7D6CD8BF} = {1D2B6B99-05C0-4E26-8D22-DEDB7D6CD8BF}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RagnaRuneStringVisualizer", "RagnaRuneStringVisualizer\RagnaRuneStringVisualizer.csproj", "{1D2B6B99-05C0-4E26-8D22-DEDB7D6CD8BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{46B04DDE-5B94-40F1-974A-599981DEE547}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46B04DDE-5B94-40F1-974A-599981DEE547}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46B04DDE-5B94-40F1-974A-599981DEE547}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D2B6B99-05C0-4E26-8D22-DEDB7D6CD8BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2B6B99-05C0-4E26-8D22-DEDB7D6CD8BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D2B6B99-05C0-4E26-8D22-DEDB7D6CD8BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D2B6B99-05C0-4E26-8D22-DEDB7D6CD8BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

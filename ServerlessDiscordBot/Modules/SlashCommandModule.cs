@@ -1,11 +1,16 @@
 ﻿using Discord.Interactions;
 using Discord.Rest;
 using Microsoft.Extensions.Logging;
+using RagnaRuneStringVisualizer;
+using System;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
 namespace ServerlessDiscordBot.Commands
 {
+    [SupportedOSPlatform("windows")]
     public class SlashCommandModule : RestInteractionModuleBase<RestInteractionContext>
     {
         public static ILogger Log { get; set; }
@@ -19,12 +24,21 @@ namespace ServerlessDiscordBot.Commands
             Log.LogInformation($"Generating RuneString image for {runestring}");
             await DeferAsync();
 
-            Log.LogInformation("Deferred response, processing...");
-            await Task.Delay(5000); // Processing
-            using var imageStream = File.OpenRead("Image.bmp");
+            Log.LogInformation("Deferred response, processing image...");
+            try
+            {
+                using var imageGenerator = new ImageGenerator(runestring);
+                using var imageStream = new MemoryStream();
+                imageGenerator.RenderToStream(imageStream, ImageFormat.Png);
+                imageStream.Position = 0; // Reset to start after writing
 
-            Log.LogInformation($"Responding with RuneString image for {runestring}");
-            await FollowupWithFileAsync(imageStream, "Image.bmp");
+                Log.LogInformation($"Responding with RuneString image for {runestring}");
+                await FollowupWithFileAsync(imageStream, $"Runestring-{runestring[..252]}.png");
+            }
+            catch (ArgumentException ex)
+            {
+                Log.LogWarning(ex, $"Couldn't render RuneString image for {runestring}");
+            }
         }
     }
 }

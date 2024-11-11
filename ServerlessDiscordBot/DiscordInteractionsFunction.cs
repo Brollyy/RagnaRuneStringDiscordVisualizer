@@ -12,12 +12,14 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace ServerlessDiscordBot
 {
+    [SupportedOSPlatform("windows")]
     public static class DiscordInteractionsFunction
     {
         private static readonly string PublicKey = Environment.GetEnvironmentVariable("DiscordPublicKey");
