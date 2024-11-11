@@ -7,9 +7,12 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using ServerlessDiscordBot.Commands;
+using ServerlessDiscordBot.Services;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace ServerlessDiscordBot
 {
@@ -53,10 +56,13 @@ namespace ServerlessDiscordBot
                 }
                 else if (interaction.Type == InteractionType.ApplicationCommand)
                 {
-                    log.LogInformation($"Responding to command: {interaction.Data}");
+                    log.LogInformation($"Responding to command: {(interaction.Data as IApplicationCommandInteractionData).Name}");
 
                     // Set up InteractionService and register SlashCommandModule dynamically
-                    await _interactionService.AddModuleAsync<SlashCommandModule>(null);
+                    if (!_interactionService.Modules.Any(module => module.Name == "SlashCommandModule"))
+                    {
+                        await _interactionService.AddModuleAsync<SlashCommandModule>(null);
+                    }
 
                     // Create an Interaction Context for the InteractionService
                     var interactionContext = new RestInteractionContext(_client, interaction);
@@ -99,39 +105,11 @@ namespace ServerlessDiscordBot
             catch (Exception ex)
             {
                 // Log and handle any parsing or validation errors
-                log.LogError($"Error processing interaction: {ex.Message}");
-                return new UnauthorizedResult();
+                log.LogError(ex, $"Error processing interaction: {ex.Message}");
+                return new InternalServerErrorResult();
             }
 
             return new BadRequestResult();
-        }
-
-        private class DiscordLogService
-        {
-            private readonly ILogger log;
-
-            public DiscordLogService(DiscordRestClient client, InteractionService interactionService, ILogger log)
-            {
-                this.log = log;
-                client.Log += LogAsync;
-                interactionService.Log += LogAsync;
-            }
-
-            private Task LogAsync(LogMessage message)
-            {
-                log.Log(message.Severity switch
-                {
-                    LogSeverity.Critical => LogLevel.Critical,
-                    LogSeverity.Error => LogLevel.Error,
-                    LogSeverity.Warning => LogLevel.Warning,
-                    LogSeverity.Info => LogLevel.Information,
-                    LogSeverity.Verbose => LogLevel.Trace,
-                    LogSeverity.Debug => LogLevel.Debug,
-                    _ => LogLevel.None
-                }, message.Exception, "{}", message);
-
-                return Task.CompletedTask;
-            }
         }
     }
 }

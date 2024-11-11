@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using ServerlessDiscordBot.Services;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace ServerlessDiscordBot
             [HttpTrigger(AuthorizationLevel.Admin, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
+            DiscordLogService logService = new(_client, _interactionService, log);
             try
             {
                 log.LogInformation("Request to register slash commands started.");
@@ -31,7 +33,10 @@ namespace ServerlessDiscordBot
                 await _client.LoginAsync(Discord.TokenType.Bot, BotToken);
 
                 // Add all modules (this automatically registers commands defined in the modules)
-                await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), null);
+                if (_interactionService.Modules.Count == 0)
+                {
+                    await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), null);
+                }
 
                 log.LogInformation("Registering all slash commands globally.");
                 await _interactionService.RegisterCommandsGloballyAsync();
