@@ -38,7 +38,7 @@ namespace ServerlessDiscordBot.Commands
                     imageStream.Position = 0; // Reset to start after writing
 
                     Log.LogInformation($"Responding with RuneString image for {runestring}");
-                    await FollowupWithFileAsync(imageStream, $"Runestring-{runestring[..Math.Min(runestring.Length, 252)]}.png");
+                    await FollowupWithFileAsync(imageStream, $"Runestring-{runestring[..Math.Min(runestring.Length, 252)]}.png", text: $"`{runestring}`");
                 }
                 catch (Exception ex)
                 {
