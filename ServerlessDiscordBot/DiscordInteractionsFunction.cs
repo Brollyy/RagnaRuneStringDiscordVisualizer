@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ServerlessDiscordBot.Commands;
 using ServerlessDiscordBot.Services;
@@ -67,13 +68,17 @@ namespace ServerlessDiscordBot
                 {
                     log.LogInformation("Responding to slash command.");
 
+                    var serviceProvider = new ServiceCollection()
+                        .AddSingleton(log)
+                        .AddSingleton(context)
+                        .AddSingleton<SlashCommandModule>()
+                        .BuildServiceProvider();
+
                     // Set up InteractionService and register SlashCommandModule dynamically
                     if (!_interactionService.Modules.Any(module => module.Name == "SlashCommandModule"))
                     {
                         log.LogInformation("Registering SlashCommandModule");
-                        await _interactionService.AddModuleAsync<SlashCommandModule>(null);
-                        SlashCommandModule.Log = log;
-                        SlashCommandModule.AzureContext = context;
+                        await _interactionService.AddModuleAsync<SlashCommandModule>(serviceProvider);
                     }
 
                     // Create an Interaction Context for the InteractionService
@@ -82,7 +87,7 @@ namespace ServerlessDiscordBot
 
                     // Execute the command from SlashCommandModule
                     log.LogInformation("Executing command from SlashCommandModule");
-                    var result = await _interactionService.ExecuteCommandAsync(interactionContext, null);
+                    var result = await _interactionService.ExecuteCommandAsync(interactionContext, serviceProvider);
 
                     if (!result.IsSuccess)
                     {

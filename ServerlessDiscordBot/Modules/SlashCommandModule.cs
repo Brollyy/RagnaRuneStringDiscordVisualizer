@@ -15,8 +15,8 @@ namespace ServerlessDiscordBot.Commands
     public class SlashCommandModule : RestInteractionModuleBase<RestInteractionContext>
     {
         private static readonly string DiscordAdminUserId = Environment.GetEnvironmentVariable("DiscordAdminUserId"); // Add your Discord ID in your settings
-        public static ILogger Log { get; set; }
-        public static ExecutionContext AzureContext { get; set; }
+        public ILogger Log { get; set; }
+        public ExecutionContext AzureContext { get; set; }
 
         [SlashCommand("runestring-image", "Renders an image that shows the contents of the runestring")]
         public async Task RunestringImageAsync(
