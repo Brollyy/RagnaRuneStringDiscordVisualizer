@@ -25,12 +25,12 @@ namespace ServerlessDiscordBot.Commands
         )
         {
             Log.LogInformation($"Generating RuneString image for {runestring}");
-            await DeferAsync();
+            await DeferAsync(ephemeral: true);
 
             Log.LogInformation("Deferred response, processing image...");
             try
             {
-                using var imageGenerator = new ImageGenerator(runestring);
+                using var imageGenerator = new ImageGenerator(runestring.Trim());
                 try
                 {
                     using var imageStream = new MemoryStream();
@@ -43,18 +43,18 @@ namespace ServerlessDiscordBot.Commands
                 catch (Exception ex)
                 {
                     Log.LogError(ex, $"Unexpected error rendering RuneString image for {runestring}");
-                    await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. <@{DiscordAdminUserId}>, please check logs with operation ID `{AzureContext.InvocationId}` for more details.", allowedMentions: Discord.AllowedMentions.All);
+                    await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. Please DM <@{DiscordAdminUserId}> and include this operation ID in your message - `{AzureContext.InvocationId}`.", allowedMentions: Discord.AllowedMentions.All, ephemeral: true);
                 }
             }
             catch (ArgumentException ex)
             {
                 Log.LogWarning($"Invalid input for RuneString image - {runestring}");
-                await FollowupAsync(ex.Message);
+                await FollowupAsync(ex.Message, ephemeral: true);
             }
             catch (Exception ex)
             {
                 Log.LogError(ex, $"Unexpected error rendering RuneString image for {runestring}");
-                await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. <@{DiscordAdminUserId}>, please check logs with operation ID `{AzureContext.InvocationId}` for more details.", allowedMentions: Discord.AllowedMentions.All);
+                await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. Please DM <@{DiscordAdminUserId}> and include this operation ID in your message - `{AzureContext.InvocationId}`.", allowedMentions: Discord.AllowedMentions.All, ephemeral: true);
             }
         }
     }

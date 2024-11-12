@@ -35,7 +35,7 @@ namespace ServerlessDiscordBot
 
         [FunctionName("HandleDiscordInteraction")]
         public static async Task<IActionResult> Run(
-             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
              ILogger log, ExecutionContext context)
         {
             DiscordLogService logService = new(_client, _interactionService, log);
@@ -90,7 +90,7 @@ namespace ServerlessDiscordBot
                         if (interaction.HasResponded)
                         {
                             // Follow up with an error message if command execution failed and interaction was already responded to
-                            await interaction.FollowupAsync($"Error: {result.ErrorReason}");
+                            await interaction.FollowupAsync($"Error: {result.ErrorReason}", ephemeral: true);
                             return new AcceptedResult();
                         }
                         return new BadRequestObjectResult(new { content = $"Error: {result.ErrorReason}" });
