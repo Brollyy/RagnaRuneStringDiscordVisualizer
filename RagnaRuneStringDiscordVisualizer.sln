@@ -13,12 +13,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F29009C6-5D9F-4540-BF2F-1DC5C06E3C3F}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		example.PNG = example.PNG
+		example2.PNG = example2.PNG
 		LICENSE = LICENSE
 		.github\workflows\main_rangarunestring.yml = .github\workflows\main_rangarunestring.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RagnaRuneStringVisualizerTest", "RagnaRuneStringVisualizerTest\RagnaRuneStringVisualizerTest.csproj", "{655028CD-629F-4789-9B35-46875717B464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RagnaRuneStringVisualizerTest", "RagnaRuneStringVisualizerTest\RagnaRuneStringVisualizerTest.csproj", "{655028CD-629F-4789-9B35-46875717B464}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1D2B6B99-05C0-4E26-8D22-DEDB7D6CD8BF} = {1D2B6B99-05C0-4E26-8D22-DEDB7D6CD8BF}
 	EndProjectSection

@@ -19,7 +19,8 @@ using RagnaRuneStringVisualizer;
 using System.Drawing.Imaging;                                       // For ImageFormat
 
 var imageGenerator = new ImageGenerator(
-    "AAEJ+IsEvJ8EgLMExMYEiNoEzO0EkIEF1JQFmKgFG7kAAAACALDNXpY3sM1e"  // Example runestring
+    "AAEJ+IsEvJ8EgLMExMYEiNoEzO0EkIEF1JQFmKgFG7kAAAACALDNXpY3sM1e", // Example runestring
+    "."                                                             // Base path to folder with required Resources
 );
 using (var memoryStream = new MemoryStream()) {
     imageGenerator.RenderToStream(memoryStream, ImageFormat.Png);   // Render contents of the image
@@ -36,7 +37,8 @@ using RagnaRuneStringVisualizer;
 using System.Drawing.Imaging;                                       // For ImageFormat
 
 var imageGenerator = new ImageGenerator(
-    "AAEJ+IsEvJ8EgLMExMYEiNoEzO0EkIEF1JQFmKgFG7kAAAACALDNXpY3sM1e"  // Example runestring
+    "AAEJ+IsEvJ8EgLMExMYEiNoEzO0EkIEF1JQFmKgFG7kAAAACALDNXpY3sM1e", // Example runestring
+    "."                                                             // Base path to folder with required Resources
 );
 imageGenerator.RenderToFile("image.png", ImageFormat.Png);          // Render contents of the image to file
 ```
@@ -67,9 +69,9 @@ All the commands are registered using [SlashCommandModule](./ServerlessDiscordBo
 
 Slash Commands are expected to respond to their interaction within the handler code.
 
-| Command | Input | Description |
-| - | - | - |
-| `runestring-image` | `runestring: Text` | Renders an image that shows the contents of the runestring. <br> Runestring - cannot be longer than 5 beats and contain more than 50 runes |
+| Command | Input | Description | Example |
+| - | - | - | - |
+| `runestring-image` | `runestring: Text` | Renders an image that shows the contents of the runestring. <br> Runestring - cannot be longer than 5 beats and contain more than 50 runes | ![example](example.png) <br> ![example](example2.png)
 
 ### Azure Setup
 
