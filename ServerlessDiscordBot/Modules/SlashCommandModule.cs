@@ -30,7 +30,7 @@ namespace ServerlessDiscordBot.Commands
             Log.LogInformation("Deferred response, processing image...");
             try
             {
-                using var imageGenerator = new ImageGenerator(runestring.Trim());
+                using var imageGenerator = new ImageGenerator(runestring.Trim(), AzureContext.FunctionAppDirectory);
                 try
                 {
                     using var imageStream = new MemoryStream();

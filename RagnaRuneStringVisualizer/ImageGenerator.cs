@@ -11,11 +11,13 @@ namespace RagnaRuneStringVisualizer
     [SupportedOSPlatform("windows")]
     public class ImageGenerator : IDisposable
     {
+        private string basePath;
         private RuneStringData? runeStringData;
         private bool disposedValue;
 
-        public ImageGenerator(string runeString)
+        public ImageGenerator(string runeString, string? basePath = null)
         {
+            this.basePath = basePath ?? ".";
             runeStringData = RuneStringSerializer.DeserializeV1(runeString);
             if (runeStringData.Value.runes.Count > 50)
             {
@@ -57,9 +59,9 @@ namespace RagnaRuneStringVisualizer
             bitmap.Save(stream, imageFormat);
         }
 
-        private static void DrawBackground(Graphics graphics, int imageHeight)
+        private void DrawBackground(Graphics graphics, int imageHeight)
         {
-            using var backgroundImage = Image.FromFile("Resources/waterTexture.png");
+            using var backgroundImage = Image.FromFile(Path.Combine(basePath, "Resources", "waterTexture.png"));
             using var backgroundTextureBrush = new TextureBrush(backgroundImage, WrapMode.Tile);
             graphics.FillRectangle(backgroundTextureBrush, 0, 0, ImageWidth, imageHeight);
         }
@@ -113,10 +115,10 @@ namespace RagnaRuneStringVisualizer
             }
         }
 
-        private static Image RuneForBeat(double beat)
+        private Image RuneForBeat(double beat)
         {
             int fracBeat = (int)Math.Round((beat - (int)beat) * RuneDivisionResolution) % RuneDivisionResolution; // closest approximation of numerator with given denominator
-            return Image.FromFile("Resources/" + fracBeat switch
+            return Image.FromFile(Path.Combine(basePath, "Resources", fracBeat switch
             {
                 0 => "rune1.png",
                 RuneDivisionResolution * 1 / 4 => "rune14.png",
@@ -127,7 +129,7 @@ namespace RagnaRuneStringVisualizer
                 RuneDivisionResolution * 1 / 6 => "rune23.png",
                 RuneDivisionResolution * 3 / 4 => "rune34.png",
                 _ => "runeX.png"
-            });
+            }));
         }
 
         private int GetTotalBeats(BPMChange globalBpm, BPMChange localBpm)
