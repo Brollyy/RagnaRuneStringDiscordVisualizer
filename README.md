@@ -34,7 +34,7 @@ using (var memoryStream = new MemoryStream()) {
 
 Rendering image to a file:
 
-```
+```csharp
 using RagnaRuneStringVisualizer;
 using System.Drawing.Imaging;                                       // For ImageFormat
 
