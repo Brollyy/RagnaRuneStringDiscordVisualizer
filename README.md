@@ -71,7 +71,7 @@ Slash Commands are expected to respond to their interaction within the handler c
 
 | Command | Input | Description | Example |
 | - | - | - | - |
-| `runestring-image` | `runestring: Text` | Renders an image that shows the contents of the runestring. <br> Runestring - cannot be longer than 5 beats and contain more than 50 runes | ![example](example.png) <br> ![example](example2.png)
+| `runestring-image` | `runestring: Text` | Renders an image that shows the contents of the runestring. <br> Runestring - cannot be longer than 5 beats and contain more than 50 runes | ![example](example.PNG) <br> ![example](example2.PNG)
 
 ### Azure Setup
 
