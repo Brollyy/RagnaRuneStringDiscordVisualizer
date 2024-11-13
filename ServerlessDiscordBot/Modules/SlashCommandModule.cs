@@ -4,10 +4,10 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using RagnaRuneStringVisualizer;
 using System;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
+using static IronSoftware.Drawing.AnyBitmap;
 
 namespace ServerlessDiscordBot.Commands
 {
