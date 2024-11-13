@@ -25,7 +25,7 @@ namespace ServerlessDiscordBot.Commands
         )
         {
             Log.LogInformation($"Generating RuneString image for {runestring}");
-            await DeferAsync(ephemeral: true);
+            await DeferAsync();
 
             Log.LogInformation("Deferred response, processing image...");
             try
@@ -38,24 +38,26 @@ namespace ServerlessDiscordBot.Commands
                     imageStream.Position = 0; // Reset to start after writing
 
                     Log.LogInformation($"Responding with RuneString image for {runestring}");
-                    await DeleteOriginalResponseAsync(); // Original Defer was ephemeral and it can't be changes, so we first delete it.
                     await FollowupWithFileAsync(imageStream, $"Runestring-{runestring[..Math.Min(runestring.Length, 252)]}.png", text: $"`{runestring}`");
                 }
                 catch (Exception ex)
                 {
                     Log.LogError(ex, $"Unexpected error rendering RuneString image for {runestring}");
-                    await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. Please DM <@{DiscordAdminUserId}> and include this operation ID in your message - `{AzureContext.InvocationId}`.", allowedMentions: Discord.AllowedMentions.All);
+                    await DeleteOriginalResponseAsync(); // Original Defer was not ephemeral and this can't be changed, so we first delete it.
+                    await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. Please DM <@{DiscordAdminUserId}> and include this operation ID in your message - `{AzureContext.InvocationId}`.", allowedMentions: Discord.AllowedMentions.All, ephemeral: true);
                 }
             }
             catch (ArgumentException ex)
             {
                 Log.LogWarning($"Invalid input for RuneString image - {runestring}");
-                await FollowupAsync(ex.Message);
+                await DeleteOriginalResponseAsync(); // Original Defer was not ephemeral and this can't be changed, so we first delete it.
+                await FollowupAsync(ex.Message, ephemeral: true);
             }
             catch (Exception ex)
             {
                 Log.LogError(ex, $"Unexpected error rendering RuneString image for {runestring}");
-                await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. Please DM <@{DiscordAdminUserId}> and include this operation ID in your message - `{AzureContext.InvocationId}`.", allowedMentions: Discord.AllowedMentions.All);
+                await DeleteOriginalResponseAsync(); // Original Defer was not ephemeral and this can't be changed, so we first delete it.
+                await FollowupAsync($"Uh oh... Looks like there was an unexpected issue creating the image. Please DM <@{DiscordAdminUserId}> and include this operation ID in your message - `{AzureContext.InvocationId}`.", allowedMentions: Discord.AllowedMentions.All, ephemeral: true);
             }
         }
     }

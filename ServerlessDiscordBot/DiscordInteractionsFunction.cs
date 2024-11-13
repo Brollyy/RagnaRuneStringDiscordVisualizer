@@ -94,8 +94,16 @@ namespace ServerlessDiscordBot
                         log.LogError($"Error executing command: {result.ErrorReason}");
                         if (interaction.HasResponded)
                         {
-                            // Follow up with an error message if command execution failed and interaction was already responded to
-                            await interaction.FollowupAsync($"Error: {result.ErrorReason}", ephemeral: true);
+                            var response = await interaction.GetOriginalResponseAsync();
+                            if (response.Flags.Value.HasFlag(MessageFlags.Loading))
+                            {
+                                if (!response.Flags.Value.HasFlag(MessageFlags.Ephemeral))
+                                {
+                                    await interaction.DeleteOriginalResponseAsync(); // Original Defer was not ephemeral and this can't be changed, so we first delete it.
+                                }
+                                // Follow up with ephemeral error message if command execution failed and interaction was deferred
+                                await interaction.FollowupAsync($"Error: {result.ErrorReason}", ephemeral: true);
+                            }
                             return new AcceptedResult();
                         }
                         return new BadRequestObjectResult(new { content = $"Error: {result.ErrorReason}" });
