@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using ServerlessDiscordBot.Commands;
 using ServerlessDiscordBot.Services;
 using System;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Versioning;
@@ -27,7 +26,7 @@ namespace ServerlessDiscordBot
         private static readonly string BotToken = Environment.GetEnvironmentVariable("DiscordBotToken");
 
         private static readonly HttpClient httpClient = new();
-        private static readonly DiscordRestClient _client = new();
+        private static readonly DiscordRestClient _client = new(new() { APIOnRestInteractionCreation = false });
         private static readonly InteractionService _interactionService = new(_client, new()
         {
             DefaultRunMode = RunMode.Sync,
@@ -46,17 +45,10 @@ namespace ServerlessDiscordBot
 
                 // Log in with the bot
                 await _client.LoginAsync(TokenType.Bot, BotToken);
-
-                // Read the request body as a byte array for signature validation
-                byte[] bodyBytes;
-                using (var memoryStream = new MemoryStream())
-                {
-                    await req.Body.CopyToAsync(memoryStream);
-                    bodyBytes = memoryStream.ToArray();
-                }
+                log.LogInformation("Logged in as a bot");
 
                 // Parse the interaction using DiscordRestClient
-                var interaction = await _client.ParseHttpInteractionAsync(PublicKey, req.Headers["X-Signature-Ed25519"], req.Headers["X-Signature-Timestamp"], bodyBytes);
+                var interaction = await _client.ParseHttpInteractionAsync(PublicKey, req.Headers["X-Signature-Ed25519"], req.Headers["X-Signature-Timestamp"], await req.ReadAsStringAsync());
 
                 // Check interaction type
                 if (interaction.Type == InteractionType.Ping)
