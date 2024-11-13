@@ -2,6 +2,8 @@
 
 Small Discord bot for creating visualizations of runestrings generated with the [RagnaRuneString](https://github.com/Brollyy/RagnaRuneString) library.
 
+ ![example](example.PNG) <br> ![example](example2.PNG)
+
 ## RagnaRuneStringVisualizer
 
 Small library that uses assets from [Edda by PKBeam](https://github.com/PKBeam/Edda) to render images of the runestrings using `ImageGenerator` class.
@@ -69,9 +71,9 @@ All the commands are registered using [SlashCommandModule](./ServerlessDiscordBo
 
 Slash Commands are expected to respond to their interaction within the handler code.
 
-| Command | Input | Description | Example |
+| Command | Input | Description |
 | - | - | - | - |
-| `runestring-image` | `runestring: Text` | Renders an image that shows the contents of the runestring. <br> Runestring - cannot be longer than 5 beats and contain more than 50 runes | ![example](example.PNG) <br> ![example](example2.PNG)
+| `runestring-image` | `runestring: Text` | Renders an image that shows the contents of the runestring. <br> Runestring - cannot be longer than 5 beats and contain more than 50 runes |
 
 ### Azure Setup
 
