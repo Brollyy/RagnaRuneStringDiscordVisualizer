@@ -1,6 +1,5 @@
 ﻿using RagnaRuneString;
 using RagnaRuneString.Version1;
-using RagnaRuneStringVisualizer.Properties;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -60,7 +59,8 @@ namespace RagnaRuneStringVisualizer
 
         private static void DrawBackground(Graphics graphics, int imageHeight)
         {
-            using var backgroundTextureBrush = new TextureBrush(Resources.waterTexture, WrapMode.Tile);
+            using var backgroundImage = Image.FromFile("Resources/waterTexture.png");
+            using var backgroundTextureBrush = new TextureBrush(backgroundImage, WrapMode.Tile);
             graphics.FillRectangle(backgroundTextureBrush, 0, 0, ImageWidth, imageHeight);
         }
 
@@ -108,25 +108,26 @@ namespace RagnaRuneStringVisualizer
                 var localNoteTime = (note.time - localBpm.startTime) * scaleFactor;
                 var x = ColumnShadowGap * (4 * note.lineIndex + 1);
                 var y = (float)((localNoteTime - localStartTime) * ImageHeightPerBeat) + RuneHeight / 2;
-                graphics.DrawImage(RuneForBeat(localNoteTime), new RectangleF(x, imageHeight - y, RuneWidth, RuneHeight), new Rectangle(0, 0, RuneImageWidth, RuneImageHeight), GraphicsUnit.Pixel);
+                using var runeImage = RuneForBeat(localNoteTime);
+                graphics.DrawImage(runeImage, new RectangleF(x, imageHeight - y, RuneWidth, RuneHeight), new Rectangle(0, 0, RuneImageWidth, RuneImageHeight), GraphicsUnit.Pixel);
             }
         }
 
-        private static Bitmap RuneForBeat(double beat)
+        private static Image RuneForBeat(double beat)
         {
             int fracBeat = (int)Math.Round((beat - (int)beat) * RuneDivisionResolution) % RuneDivisionResolution; // closest approximation of numerator with given denominator
-            return fracBeat switch
+            return Image.FromFile("Resources/" + fracBeat switch
             {
-                0 => Resources.rune1,
-                RuneDivisionResolution * 1 / 4 => Resources.rune14,
-                RuneDivisionResolution * 1 / 3 => Resources.rune13,
-                RuneDivisionResolution * 5 / 6 => Resources.rune13,
-                RuneDivisionResolution * 1 / 2 => Resources.rune12,
-                RuneDivisionResolution * 2 / 3 => Resources.rune23,
-                RuneDivisionResolution * 1 / 6 => Resources.rune23,
-                RuneDivisionResolution * 3 / 4 => Resources.rune34,
-                _ => Resources.runeX
-            };
+                0 => "rune1.png",
+                RuneDivisionResolution * 1 / 4 => "rune14.png",
+                RuneDivisionResolution * 1 / 3 => "rune13.png",
+                RuneDivisionResolution * 5 / 6 => "rune13.png",
+                RuneDivisionResolution * 1 / 2 => "rune12.png",
+                RuneDivisionResolution * 2 / 3 => "rune23.png",
+                RuneDivisionResolution * 1 / 6 => "rune23.png",
+                RuneDivisionResolution * 3 / 4 => "rune34.png",
+                _ => "runeX.png"
+            });
         }
 
         private int GetTotalBeats(BPMChange globalBpm, BPMChange localBpm)

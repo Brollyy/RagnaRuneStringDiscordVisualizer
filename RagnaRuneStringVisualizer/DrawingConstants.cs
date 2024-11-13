@@ -15,7 +15,7 @@
         // Gridlines
         public const string MajorGridlineColor = "#333333";
         public const string MinorGridlineColor = "#555555";
-        public const float MajorGridlineThickness = 1.5f; // Doesn't seem to be different from 1?
+        public const float MajorGridlineThickness = 2;
         public const float MinorGridlineThickness = 1;
         public const float GridlineOffset = (float)ImageHeightPerBeat / GridDivision;
 
