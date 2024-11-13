@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RagnaRuneStringVisualizer\RagnaRuneStringVisualizer.csproj" />
-    <PackageReference Include="IronSoftware.System.Drawing" Version="2024.9.15" />
   </ItemGroup>
 
 </Project>

@@ -1,15 +1,11 @@
-﻿using IronSoftware.Drawing;
-using RagnaRuneString;
+﻿using RagnaRuneString;
 using RagnaRuneString.Version1;
 using RagnaRuneStringVisualizer.Properties;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Runtime.Versioning;
-using static IronSoftware.Drawing.AnyBitmap;
 using static RagnaRuneStringVisualizer.DrawingConstants;
-using PointF = System.Drawing.PointF;
-using Rectangle = System.Drawing.Rectangle;
-using RectangleF = System.Drawing.RectangleF;
 
 namespace RagnaRuneStringVisualizer
 {
@@ -50,7 +46,7 @@ namespace RagnaRuneStringVisualizer
 
             int imageHeight = (int)Math.Ceiling(ImageHeightPerBeat * (totalBeats + 2 * ImageVerticalPaddingInBeats));
 
-            using Bitmap bitmap = new AnyBitmap(ImageWidth, imageHeight);
+            using var bitmap = new Bitmap(ImageWidth, imageHeight);
             using var graphics = Graphics.FromImage(bitmap);
 
             DrawBackground(graphics, imageHeight);
@@ -59,7 +55,7 @@ namespace RagnaRuneStringVisualizer
             DrawNotes(graphics, startTime, imageHeight, globalBpm, localBpm);
 
             // Save the image to the provided stream in PNG format
-            FromBitmap(bitmap).ExportStream(stream, imageFormat);
+            bitmap.Save(stream, imageFormat);
         }
 
         private static void DrawBackground(Graphics graphics, int imageHeight)
@@ -112,19 +108,14 @@ namespace RagnaRuneStringVisualizer
                 var localNoteTime = (note.time - localBpm.startTime) * scaleFactor;
                 var x = ColumnShadowGap * (4 * note.lineIndex + 1);
                 var y = (float)((localNoteTime - localStartTime) * ImageHeightPerBeat) + RuneHeight / 2;
-                graphics.DrawImage(
-                    RuneForBeat(localNoteTime),
-                    new RectangleF(x, imageHeight - y, RuneWidth, RuneHeight),
-                    new Rectangle(0, 0, RuneImageWidth, RuneImageHeight),
-                    GraphicsUnit.Pixel
-                );
+                graphics.DrawImage(RuneForBeat(localNoteTime), new RectangleF(x, imageHeight - y, RuneWidth, RuneHeight), new Rectangle(0, 0, RuneImageWidth, RuneImageHeight), GraphicsUnit.Pixel);
             }
         }
 
-        private static Image RuneForBeat(double beat)
+        private static Bitmap RuneForBeat(double beat)
         {
             int fracBeat = (int)Math.Round((beat - (int)beat) * RuneDivisionResolution) % RuneDivisionResolution; // closest approximation of numerator with given denominator
-            return FromBitmap(fracBeat switch
+            return fracBeat switch
             {
                 0 => Resources.rune1,
                 RuneDivisionResolution * 1 / 4 => Resources.rune14,
@@ -135,7 +126,7 @@ namespace RagnaRuneStringVisualizer
                 RuneDivisionResolution * 1 / 6 => Resources.rune23,
                 RuneDivisionResolution * 3 / 4 => Resources.rune34,
                 _ => Resources.runeX
-            });
+            };
         }
 
         private int GetTotalBeats(BPMChange globalBpm, BPMChange localBpm)

@@ -1,5 +1,6 @@
-﻿using System.Runtime.Versioning;
-using static IronSoftware.Drawing.AnyBitmap;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.Versioning;
 
 internal class Program
 {
@@ -21,41 +22,16 @@ internal class Program
             return;
         }
 
-        ImageFormat imageFormat = GetImageFormat(filePath);
+        var extension = Path.GetExtension(filePath);
+        ImageFormatConverter converter = new();
+        ImageFormat imageFormat = converter.ConvertFromString(string.Concat(extension[1].ToString(), extension.AsSpan(2))) switch
+        {
+            null => throw new ArgumentException($"Couldn't recognize image format for {extension}"),
+            ImageFormat i => i,
+            _ => throw new ArgumentException($"Couldn't recognize image format for {extension}")
+        };
+
         RagnaRuneStringVisualizer.ImageGenerator imageGenerator = new(runestring);
         imageGenerator.RenderToFile(filePath, imageFormat);
-    }
-
-    private static ImageFormat GetImageFormat(string filename)
-    {
-        if (string.IsNullOrEmpty(filename))
-        {
-            throw new FileNotFoundException("Please provide filename.");
-        }
-
-        if (filename.ToLower().EndsWith("png"))
-        {
-            return ImageFormat.Png;
-        }
-        else if (filename.ToLower().EndsWith("jpg") || filename.ToLower().EndsWith("jpeg"))
-        {
-            return ImageFormat.Jpeg;
-        }
-        else if (filename.ToLower().EndsWith("webp"))
-        {
-            return ImageFormat.Jpeg;
-        }
-        else if (filename.ToLower().EndsWith("gif"))
-        {
-            return ImageFormat.Gif;
-        }
-        else if (filename.ToLower().EndsWith("tif") || filename.ToLower().EndsWith("tiff"))
-        {
-            return ImageFormat.Tiff;
-        }
-        else
-        {
-            return ImageFormat.Bmp;
-        }
     }
 }
