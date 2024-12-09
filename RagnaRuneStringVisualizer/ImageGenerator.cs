@@ -159,7 +159,7 @@ namespace RagnaRuneStringVisualizer
 
         private BPMChange GetGlobalBPM()
         {
-            BPMChange globalBpm = runeStringData!.Value.bpmChanges.Where(b => b.startTime <= 0.0001).FirstOrDefault();
+            BPMChange globalBpm = runeStringData!.Value.bpmChanges.Where(b => b.startTime < 0).FirstOrDefault();
             if (globalBpm.bpm == 0) globalBpm.bpm = 120;
             return globalBpm;
         }
@@ -167,7 +167,7 @@ namespace RagnaRuneStringVisualizer
         private BPMChange GetLocalBPM(double globalBpm)
         {
             Rune firstRune = runeStringData!.Value.runes.First();
-            BPMChange localBpm = runeStringData!.Value.bpmChanges.Where(b => firstRune.time - b.startTime >= 0.0001).LastOrDefault();
+            BPMChange localBpm = runeStringData!.Value.bpmChanges.Where(b => firstRune.time - b.startTime >= 0).LastOrDefault();
             if (localBpm.bpm == 0) localBpm.bpm = globalBpm;
             return localBpm;
         }
